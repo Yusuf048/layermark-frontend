@@ -22,8 +22,8 @@ export class BookApi {
         return response.data;
     }
 
-    async getBooksByGenreAuthor(genre, author) {
-        const response = await axios.get( `${BOOK_API_URL}/${genre}/${author}`);
+    async getBooksByGenreFiltered(genre, start, end, author, bookName) {
+        const response = await axios.get( `${BOOK_API_URL}/${genre}/${start}/${end}/${author}/${bookName}`);
         return response.data;
     }
 }

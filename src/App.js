@@ -28,6 +28,8 @@ import ListSubheader from '@mui/material/ListSubheader';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 
+
+
 import TextField from '@mui/material/TextField';
 
 import Accordion from '@mui/material/Accordion';
@@ -39,12 +41,13 @@ import {BookApi} from "./api/BookApi";
 import BookList from "./components/BookList";
 
 function App() {
-    const allGenres = ["Action and Adventure", "Fantasy", "Historical", "Science Fiction", "Thriller", "Classics", "Historical Fiction", "Mystery", "Romance"];
+    const allGenres = ["Action and Adventure", "Fantasy", "Historical", "Science Fiction", "Thriller", "Classics", "Historical Fiction", "Mystery", "Romance", "Biography"];
     const [books, setBooks] = useState([]);
     const [colLength, setColLength] = useState(1);
 
     const [genreBooks, setGenreBooks] = useState([{genre: "", books: []}]);
-    const [filterBooks, setFilterBooks] = useState([{genre: "", books: []}]);
+    const [authorName, setAuthorName] = useState("");
+    const [bookName, setBookName] = useState("");
 
     const now = new Date();
     const startt = moment(
@@ -105,11 +108,15 @@ function App() {
             bookApi.getBooksByGenre(allGenres[i], beginDate, endDate).then(data => {
                 if(data.length !== 0){
                     setGenreBooks(oldArray => [...oldArray, {genre: allGenres[i], books: data}]);
-                    /*tempBooks.forEach((value, index, array) => {
-                        if(value.genre === allGenres[i]){
-                            tempBooks[value].books = data;
+                    /*const tempBooks = genreBooks.map((value, index, array) => {
+                        if (value.books !== data && index+1 === i) {
+                            return {genre: allGenres[i], books: data};
+                        } else {
+                            return value;
                         }
-                    })*/
+                    });
+                    console.log(tempBooks);
+                    setGenreBooks(tempBooks);*/
 
                     //tempBooks[i].books = data;
 
@@ -128,53 +135,6 @@ function App() {
                 console.log(data);
             });
 
-            switch (genre) {
-                case "Action and Adventure":
-                    bookApi.getBooksByGenre(genre).then(data => {
-                        setActionBooks(data);
-                    });
-                    break;
-                case "Fantasy":
-                    bookApi.getBooksByGenre(genre).then(data => {
-                        setFantasyBooks(data);
-                    });
-                    break;
-                case "Historical":
-                    bookApi.getBooksByGenre(genre).then(data => {
-                        setHistoricalBooks(data);
-                    });
-                    break;
-                case "Science Fiction":
-                    bookApi.getBooksByGenre(genre).then(data => {
-                        setSciFiBooks(data);
-                    });
-                    break;
-                case "Thriller":
-                    bookApi.getBooksByGenre(genre).then(data => {
-                        setThrillerBooks(data);
-                    });
-                    break;
-                case "Classics":
-                    bookApi.getBooksByGenre(genre).then(data => {
-                        setClassicsBooks(data);
-                    });
-                    break;
-                case "Historical Fiction":
-                    bookApi.getBooksByGenre(genre).then(data => {
-                        setHistFiBooks(data);
-                    });
-                    break;
-                case "Mystery":
-                    bookApi.getBooksByGenre(genre).then(data => {
-                        setMysteryBooks(data);
-                    });
-                    break;
-                case "Romance":
-                    bookApi.getBooksByGenre(genre).then(data => {
-                        setRomanceBooks(data);
-                    });
-                    break;
-            }
         })*/
         /*bookApi.getBooksByGenre().then(data =>{
             setGenres(data);
@@ -182,13 +142,30 @@ function App() {
             console.log(typeof(data));
         })*/
     }
-    function fetchBooksByGenreFiltered(author, startDate, endDate) {
-        for (let i = 0; i < allGenres.length; i++){
-            bookApi.getBooksByGenreAuthor(allGenres[i], author).then(data => {
-                if(data.length !== 0){
+    function fetchBooksByGenreFiltered(startDate, endDate, author, book) {
+        setGenreBooks([{genre: "", books: []}]);
+        if((author === "" || author === "Author Name") && (book === "" || book === "Book Name")){
+            author = "Author Name";
+            book = "Book Name";
+            for (let i = 0; i < allGenres.length; i++) {
+                bookApi.getBooksByGenre(allGenres[i], startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD')).then(data => {
+                    console.log(data);
                     setGenreBooks(oldArray => [...oldArray, {genre: allGenres[i], books: data}]);
-                }
-            });
+
+                });
+            }
+        } else {
+            for (let i = 0; i < allGenres.length; i++) {
+                if (book === "")
+                    book = "Book Name";
+                if (author === "")
+                    author = "Author Name";
+
+                bookApi.getBooksByGenreFiltered(allGenres[i], startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'), author, book).then(data => {
+                    console.log(data);
+                    setGenreBooks(oldArray => [...oldArray, {genre: allGenres[i], books: data}]);
+                });
+            }
         }
     }
 
@@ -198,86 +175,50 @@ function App() {
         console.log("APPLY CALLBACK");
         const firstDate = startDate.format('MM');
         const lastDate = endDate.format('MM');
-        // fetchBooksByGenreFiltered()
-        //fetchBooksByGenre(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
-        setGenreBooks([{genre: "", books: []}]);
-
-        for (let i = 0; i < allGenres.length; i++) {
-            bookApi.getBooksByGenre(allGenres[i], startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD')).then(data => {
-                console.log(data);
-                setGenreBooks(oldArray => [...oldArray, {genre: allGenres[i], books: data}]);
-                /*const tempBooks = genreBooks.map((value, index, array) => {
-                    if (value.books !== data && index+1 === i) {
-                        return {genre: allGenres[i], books: data};
-                    } else {
-                        return value;
-                    }
-                });
-                console.log(tempBooks);
-                setGenreBooks(tempBooks);*/
-            });
-        }
-        //setGenreBooks(filterBooks);
     };
+
+    const onSearchClick = () => {
+        fetchBooksByGenreFiltered(start, end, authorName, bookName);
+
+    };
+    const changeAuthor = (event) => {
+        setAuthorName(event.target.value);
+    };
+    const changeBook = (event) => {
+        setBookName(event.target.value);
+    };
+
+
 
     useEffect(() => {
         // fetchBooks();
         fetchBooksByGenre(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
     }, []);
-    // <ImageList sx={{ width: "100%", height: 700 , textAlign: "center"}} cols={colLength}>
 
     /*
-    * {books.map((item) => {
-                        <BookList books={item} genre={item.key} colLength={5}/>
-                        return(
-                            item.map((book) => (
-                                <BookList books={book} genre={item} colLength={5}/>
-                            ))
-                        );
-                    })}*/
-    /*
-    * {Object.keys(genres).map((key) => {
-                        return(
-                            <BookList books={genreBooks.boo} genre={key} colLength={5}/>
-                        );
-                    })
-                    }*/
+    * <Avatar
+                            sx={{ bgcolor: deepOrange[500] }}
+                            alt="Yusuf Alpdemir"
+                            src="/broken-image.jpg"
+                        />*/
 
-    // if (obj.books.length !== 0){
-    //                                 return (
-    //                                     <BookList books={obj.books} genre={obj.genre} colLength={5}/>
-    //                                 );
-    //                             }
     return (
       <Router>
         <div className="App">
             <header className="App-header">
                 <AppBar position="static">
                     <Toolbar>
-                        <IconButton
-                            size="large"
-                            edge="start"
-                            color="inherit"
-                            aria-label="menu"
-                            sx={{ mr: 2 }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                        <Button color="inherit" sx={{width: 150}}/>
+                        <Typography variant="h5" component="div" sx={{ flexGrow: 1}}>
                             Book Collection
                         </Typography>
-                        <Button color="inherit">Add Book</Button>
-                        <Avatar
-                            sx={{ bgcolor: deepOrange[500] }}
-                            alt="Yusuf Alpdemir"
-                            src="/broken-image.jpg"
-                        />
+                        <Button color="inherit" sx={{width: 150}}>Add Book</Button>
                     </Toolbar>
                 </AppBar>
             </header>
             <div className="App-body">
                 <div className="Filtering-body">
-                    <Accordion>
+                    <Accordion sx={{backgroundColor: "rgba(201,239,245,0.2)", marginBottom: "18px"}}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="panel1a-content"
@@ -285,19 +226,7 @@ function App() {
                         >
                             <Typography>Filtering</Typography>
                         </AccordionSummary>
-                        <AccordionDetails>
-                            <TextField id="outlined-basic" label="Author Name" variant="outlined" />
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1a-content"
-                            id="panel1a-header"
-                        >
-                            <Typography>Sorting</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
+                        <AccordionDetails sx={{display:"flex", justifyContent: "space-around"}}>
                             <DateTimeRangeContainer
                                 ranges={ranges}
                                 start={start}
@@ -307,15 +236,19 @@ function App() {
                                 // leftMode={true}
                                 style={{ height: '110px' }}
                             >
-                                <input
-                                    type="text"
+
+                                <TextField
+                                    id="outlined-helperText"
+                                    label="Release Date"
                                     value={`${start.format('MM/DD/YYYY')} - ${end.format('MM/DD/YYYY')}`}
                                 />
                             </DateTimeRangeContainer>
+                            <TextField id="outlined-basic" label="Author Name" variant="outlined" onChange={changeAuthor}/>
+                            <TextField id="outlined-basic" label="Book Name" variant="outlined" onChange={changeBook}/>
+                            <Button variant="contained" onClick={onSearchClick}>Search</Button>
                         </AccordionDetails>
                     </Accordion>
                 </div>
-                <hr/>
                 <div className="App-books" >
 
                     {
@@ -339,6 +272,42 @@ function App() {
                                 );
                             }
                             if (obj.genre === "Science Fiction" && obj.books.length !== 0) {
+                                return (
+                                    <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                );
+                            }
+                            if (obj.genre === "Thriller" && obj.books.length !== 0) {
+                                return (
+                                    <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                );
+                            }
+                            if (obj.genre === "Classics" && obj.books.length !== 0) {
+                                return (
+                                    <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                );
+                            }
+                            if (obj.genre === "Historical Fiction" && obj.books.length !== 0) {
+                                return (
+                                    <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                );
+                            }
+                            if (obj.genre === "Mystery" && obj.books.length !== 0) {
+                                return (
+                                    <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                );
+                            }
+                            if (obj.genre === "Romance" && obj.books.length !== 0) {
+                                return (
+                                    <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                );
+                            }
+                            if (obj.genre === "Biography" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
                                               filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
