@@ -188,6 +188,16 @@ function App() {
         setBookName(event.target.value);
     };
 
+    const editBook = () => {
+
+    };
+    const parentBookDelete = (itemOpened) => {
+        bookApi.deleteBook(itemOpened).then(data => {
+            console.log(data);
+        });
+        fetchBooksByGenre(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+    };
+
 
 
     useEffect(() => {
@@ -256,61 +266,61 @@ function App() {
                             if (obj.genre === "Action and Adventure" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                             if (obj.genre === "Fantasy" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                             if (obj.genre === "Historical" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                             if (obj.genre === "Science Fiction" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                             if (obj.genre === "Thriller" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                             if (obj.genre === "Classics" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                             if (obj.genre === "Historical Fiction" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                             if (obj.genre === "Mystery" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                             if (obj.genre === "Romance" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                             if (obj.genre === "Biography" && obj.books.length !== 0) {
                                 return (
                                     <BookList start={start.format('YYYY-MM-DD')} end={end.format('YYYY-MM-DD')}
-                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj}/>
+                                              filteredBooks={genreBooks} setFilteredBooks={setGenreBooks} obj={obj} parentBookDelete={parentBookDelete}/>
                                 );
                             }
                         })

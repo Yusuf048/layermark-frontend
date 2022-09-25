@@ -10,6 +10,7 @@ import {BookApi} from "../api/BookApi";
 import Button from "@mui/material/Button";
 import Box from '@mui/material/Box';
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 
 
 const style = {
@@ -27,18 +28,27 @@ const style = {
     borderRadius: 3,
 };
 
-function ChildModal({setDeleteBook}) {
+function ChildModal({itemOpened, setFilteredBooks, parentBookDelete, setOpenModal}) {
     const [open, setOpen] = React.useState(false);
+    const bookApi = new BookApi();
+    const [itemDeletion, setItemDeletion] = React.useState(false);
+
     const handleOpen = () => {
         setOpen(true);
+        setOpenModal(false);
     };
     const handleClose = () => {
         setOpen(false);
     };
     const handleDelete = () => {
         setOpen(false);
-        setDeleteBook(true);
+        parentBookDelete(itemOpened);
     }
+
+    useEffect(() => {
+
+        setItemDeletion(false);
+    }, [itemDeletion]);
 
     return (
         <React.Fragment>
@@ -60,7 +70,7 @@ function ChildModal({setDeleteBook}) {
     );
 }
 
-const BookList = ({start, end, filteredBooks, setFilteredBooks, obj}) => {
+const BookList = ({start, end, filteredBooks, setFilteredBooks, obj, parentBookDelete}) => {
     const allGenres = ["Action and Adventure", "Fantasy", "Historical", "Science Fiction", "Thriller", "Classics", "Historical Fiction", "Mystery", "Romance"];
     //const [genreBooks, setGenreBooks] = useState([{genre: "", books: []}]);
     const [colLength, setColLength] = useState(1);
@@ -70,6 +80,19 @@ const BookList = ({start, end, filteredBooks, setFilteredBooks, obj}) => {
     const [authorOpened, setAuthorOpened] = useState("");
     const [bookOpened, setBookOpened] = useState("");
     const [imgOpened, setImgOpened] = useState("");
+
+    const [authorChange, setAuthorChange] = useState("");
+    const [bookChange, setBookChange] = useState("");
+    const [imgChange, setImgChange] = useState("");
+    const [genreChange, setGenreChange] = useState("");
+    const [dateChange, setDateChange] = useState("");
+
+    const [deleteBook, setDeleteBook] = useState(false);
+    const [deleteBookId, setDeleteBookId] = useState(-1);
+
+
+
+    const [openEditModal, setOpenEditModal] = useState(false);
 
     const bookApi = new BookApi();
 
@@ -117,10 +140,50 @@ const BookList = ({start, end, filteredBooks, setFilteredBooks, obj}) => {
         setImgOpened("");
     };
 
+    const openEditor = () => {
+        setOpenEditModal(true);
+    }
+    const handleEditorClose = () => {
+        setOpenEditModal(false);
+        setAuthorChange("");
+        setBookChange("");
+        setGenreChange("");
+        setImgChange("");
+    }
+    const handleEdit = () => {
+        console.log(bookChange);
+        console.log(genreChange);
+        bookApi.editBook(itemOpened, bookChange, authorChange, imgChange, genreChange).then(data => {
+            console.log(data);
+        });
+    }
+
+    const changeAuthor = (event) => {
+        setAuthorChange(event.target.value);
+    };
+    const changeBook = (event) => {
+        setBookChange(event.target.value);
+    };
+    const changeGenre = (event) => {
+        setGenreChange(event.target.value);
+    };
+    const changeImg = (event) => {
+        setImgChange(event.target.value);
+    };
+    const changeDate = (event) => {
+        setDateChange(event.target.value);
+    };
+
+    const handleDelete = () => {
+        setOpenModal(false);
+        parentBookDelete(itemOpened);
+    }
+
     useEffect(() => {
         console.log("BURDAYIM")
         //fetchBooksByGenre();
     }, [start]);
+
 
     // <ImageList sx={{ width: "100%", height: 700 , textAlign: "center"}} cols={colLength}>
     // </ImageList>
@@ -196,11 +259,28 @@ const BookList = ({start, end, filteredBooks, setFilteredBooks, obj}) => {
                                         Image Url: {imgOpened}
                                     </Typography>
                                     <div className="buttons">
-                                        <Button >Edit Information</Button>
-                                        <ChildModal />
+                                        <Button onClick={handleDelete}>Delete Book</Button>
+
                                     </div>
 
 
+                                </Box>
+                            </Modal>
+
+                            <Modal
+                                hideBackdrop
+                                open={openEditModal}
+                                onClose={handleEditorClose}
+                                aria-labelledby="child-modal-title"
+                                aria-describedby="child-modal-description"
+                            >
+                                <Box sx={{ ...style, width: 200 }}>
+                                    <TextField id="outlined-basic" label="Author Name" variant="outlined" onChange={changeAuthor}/>
+                                    <TextField id="outlined-basic" label="Book Name" variant="outlined" onChange={changeBook}/>
+                                    <TextField id="outlined-basic" label="Image URL" variant="outlined" onChange={changeImg}/>
+                                    <TextField id="outlined-basic" label="Genre Name" variant="outlined" onChange={changeGenre}/>
+                                    <Button onClick={handleEditorClose}>Cancel</Button>
+                                    <Button onClick={handleEdit}>Save Changes</Button>
                                 </Box>
                             </Modal>
                         </div>
