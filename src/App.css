@@ -1,7 +1,6 @@
 .App {
   text-align: center;
   background-color: #eeeeee;
-  /*background-color: rgba(134,120,155,0.56);*/
 }
 
 .App-header {
@@ -21,7 +20,7 @@
   align-self: center;
   width: auto;
 }
-.asd {
+.Image-lists {
   display: grid;
   grid-column-end: 6;
   justify-content: left;
@@ -34,20 +33,10 @@
   width: 100%;
   height: auto;
 }
-/*.asd {
-  width: 1700px;
-  display: inline-flex;
-  justify-content: space-around;
-  align-content: flex-start;
-}*/
 
 .buttons {
   display: flex;
   justify-content: space-between;
-}
-
-.Filtering-body {
-
 }
 
 .App-link {
